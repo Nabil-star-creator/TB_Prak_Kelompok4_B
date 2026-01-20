@@ -3,13 +3,13 @@
 #include <cmath>
 #include <iostream>
 
-// ---------------------------------- global variabel
+//---------------------------------- global variabel
 const float PI = 3.14159265f;
 
-const float MOVE_SPEED = 0.002f; 
-const float MOUSE_SENSITIVITY = 0.002f;
+const float MOVE_SPEED = 0.01f; 
+const float MOUSE_SENSITIVITY = 0.01f;
 
-float cameraPosX = 0.0f, cameraPosY = 3.0f, cameraPosZ = 12.0f;
+float cameraPosX = 0.0f, cameraPosY = 3.0f, cameraPosZ = 10.0f;
 float cameraYaw = 0.0f, cameraPitch = -10.0f;
 
 int lastMouseX = 0, lastMouseY = 0;
@@ -40,9 +40,9 @@ float treeScale = 1.0f; // Skala awal pohon
 
 // ---------------------------------- fungsi pencahayaan
 void initLighting() {
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
+    glEnable(GL_DEPTH_TEST); // Agar benda depan menutupi benda belakang
+    glEnable(GL_LIGHTING); // Menyalakan sistem pencahayaan
+    glEnable(GL_LIGHT0); // Menyalakan lampu nomor 0
     
     // [PENTING] Tambahkan ini agar saat di-scale cahaya tetap bagus
     glEnable(GL_NORMALIZE); 
@@ -89,7 +89,7 @@ void updateLightingLogic() {
         glLightfv(GL_LIGHT0, GL_SPECULAR, val_specular);
     }
 
-    // --- 3. POSISI & TIPE CAHAYA ---
+    // --- 3.  POSISI & TIPE CAHAYA ---
     GLfloat w_component = isDirectional ? 0.0f : 1.0f; 
     GLfloat light_pos[] = {-4.0f, 4.3f, 4.0f, w_component}; 
     glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
@@ -119,7 +119,7 @@ void updateLightingLogic() {
     }
 }
 
-// ---------------------------------- FUNGSI OBJEK
+// Nabil Muhammad Ramadan (2406072) ---------------------------------- FUNGSI OBJEK
 
 // 1. Domba Minecraft 
 void drawMinecraftSheep() {
@@ -617,17 +617,18 @@ void drawMinecraftSheep5() {
 }
 
 
-// 2. Pohon Minecraft
+// 2. Pohon Minecraft............... Neng isan lopiani (2406179)
 void drawMinecraftTree() {
     glPushMatrix();
     glTranslatef(4.0f, 0.0f, -4.0f); 
 
     // SCALING POHON
-    glScalef(treeScale, treeScale, treeScale); 
+     
 
     // Batang
     glColor3f(0.4f, 0.26f, 0.13f);
     glPushMatrix();
+    glScalef(treeScale, treeScale, treeScale);
     glTranslatef(0.0f, 1.5f, 0.0f);
     glScalef(0.6f, 3.0f, 0.6f); 
     glutSolidCube(1.0);
@@ -636,14 +637,17 @@ void drawMinecraftTree() {
     // Daun Bawah
     glColor3f(0.0f, 0.5f, 0.0f);
     glPushMatrix();
+    glScalef(treeScale, treeScale, treeScale);
     glTranslatef(0.0f, 3.0f, 0.0f); 
     glScalef(2.5f, 1.0f, 2.5f);     
     glutSolidCube(1.0);
     glPopMatrix();
+   
 
     // Daun Atas
     glColor3f(0.1f, 0.7f, 0.1f);
     glPushMatrix();
+    glScalef(treeScale, treeScale, treeScale);
     glTranslatef(0.0f, 4.0f, 0.0f); 
     glScalef(1.5f, 1.2f, 1.5f);     
     glutSolidCube(1.0);
@@ -788,7 +792,7 @@ void drawMinecraftTree5() {
     glPopMatrix();
 }
 
-// 3. Tiang Lampu
+// 3. Tiang Lampu ..............Rival arizal sutisna (2406064)
 void drawMinecraftLamp() {
     glPushMatrix();
     glTranslatef(-8.0f, 0.0f, 4.0f); 
@@ -832,11 +836,11 @@ void drawMinecraftLamp() {
     glPopMatrix();
 }
 
-// 4. Kincir Angin
+// 4. Kincir Angin.................. Ayu patmawati (2406112)
 void drawMinecraftWindmill() {
     glPushMatrix();
     glTranslatef(4.0f, 0.0f, 4.0f); 
-
+    
     // Menara
     glColor3f(0.5f, 0.5f, 0.5f);
     glPushMatrix();
@@ -875,7 +879,7 @@ void drawMinecraftWindmill() {
     }
     glPopMatrix();
 }
-
+/////////////////////////////////////////////////////// Nabil
 void drawFloor() {
     glBegin(GL_QUADS);
     glColor3f(0.2f, 0.6f, 0.2f);
@@ -887,38 +891,46 @@ void drawFloor() {
     glEnd();
 }
 
-// ---------------------------------- fungsi kontrol
+// ---------------------------------- fungsi kontrol/////////////////////////////////////////////////////// Isan
 void updateCamera() {
+    // 1. Mengubah sudut pandang (Yaw/Pitch) menjadi radian untuk perhitungan matematika
     float yawRad = cameraYaw * PI / 180.0f;
     float pitchRad = cameraPitch * PI / 180.0f;
+
+    // 2. Menghitung vektor arah depan (Forward) dan samping (Right)
     float forwardX = sin(yawRad) * cos(pitchRad);
     float forwardY = -sin(pitchRad);
     float forwardZ = -cos(yawRad) * cos(pitchRad);
-    float rightX = sin(yawRad + PI/2);
+
+    float rightX = sin(yawRad + PI/2); // Arah kanan adalah 90 derajat dari arah pandang
     float rightZ = -cos(yawRad + PI/2);
 
-    if (keys['w'] || keys['W']) {
+
+    // 3. Mengubah posisi kamera berdasarkan tombol yang ditekan
+    if (keys['w'] || keys['W']) { // Maju
         cameraPosX += forwardX * MOVE_SPEED;
         cameraPosY += forwardY * MOVE_SPEED;
         cameraPosZ += forwardZ * MOVE_SPEED;
     }
-    if (keys['s'] || keys['S']) {
+    if (keys['s'] || keys['S']) { // Mundur
         cameraPosX -= forwardX * MOVE_SPEED;
         cameraPosY -= forwardY * MOVE_SPEED;
         cameraPosZ -= forwardZ * MOVE_SPEED;
     }
-    if (keys['a'] || keys['A']) {
+    if (keys['a'] || keys['A']) { // Geser Kiri (Strafe Left)
         cameraPosX -= rightX * MOVE_SPEED;
         cameraPosZ -= rightZ * MOVE_SPEED;
     }
-    if (keys['d'] || keys['D']) {
+    if (keys['d'] || keys['D']) { // Geser Kanan (Strafe Right)
         cameraPosX += rightX * MOVE_SPEED;
         cameraPosZ += rightZ * MOVE_SPEED;
     }
-    if (keys[' ']) cameraPosY += MOVE_SPEED;
-    if (keys[GLUT_KEY_CTRL_L] || keys[GLUT_KEY_CTRL_R]) cameraPosY -= MOVE_SPEED;
+    // Terbang naik/turun
+    if (keys[' ']) cameraPosY += MOVE_SPEED; // Spasi untuk naik
+    if (keys[GLUT_KEY_CTRL_L] || keys[GLUT_KEY_CTRL_R]) cameraPosY -= MOVE_SPEED; // Ctrl untuk turun
 }
 
+///////////////////////////////////////////////////////////////////////////// Nabil
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -929,15 +941,21 @@ void display() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
+    // 1. Menghitung titik target (kemana mata melihat)
     float yawRad = cameraYaw * PI / 180.0f;
     float pitchRad = cameraPitch * PI / 180.0f;
+    
+    // Titik target = Posisi Kamera + Arah Vektor
     float lookX = cameraPosX + sin(yawRad) * cos(pitchRad);
     float lookY = cameraPosY - sin(pitchRad);
     float lookZ = cameraPosZ - cos(yawRad) * cos(pitchRad);
 
-    gluLookAt(cameraPosX, cameraPosY, cameraPosZ, lookX, lookY, lookZ, 0.0f, 1.0f, 0.0f);
+    // 2. Memberitahu OpenGL posisi dan arah kamera
+    gluLookAt(cameraPosX, cameraPosY, cameraPosZ, // Posisi Mata (Eye)
+              lookX, lookY, lookZ,                // Titik yang dilihat (Center/Target)
+              0.0f, 1.0f, 0.0f);                  // Arah "Atas" (Up Vector) - Sumbu Y adalah atas
 
-    updateLightingLogic();
+	updateLightingLogic();
 
     drawMinecraftSheep();  
 	drawMinecraftSheep2();  
@@ -956,7 +974,7 @@ void display() {
 
     glutSwapBuffers();
 }
-
+////////////////////////////////////////////////////////////////////////////////// Ayu
 void keyboard(unsigned char key, int x, int y) {
     keys[key] = true;
     if (key == 27) exit(0);
@@ -988,9 +1006,20 @@ void keyboard(unsigned char key, int x, int y) {
     // Kontrol Ukuran Pohon
     if (key == 'z' || key == 'Z') {
         treeScale += 0.1f;
+        
+        // [BATAS MAKSIMAL]
+        // Jika ukuran lebih dari 3.0 (3x lipat), paksa tetap di 3.0
+        if (treeScale > 3.0f) { 
+            treeScale = 3.0f; 
+        }
     }
     if (key == 'x' || key == 'X') {
         treeScale -= 0.1f;
+        // [BATAS MINIMAL]
+        // Jika ukuran kurang dari 0.2 (terlalu kecil), paksa tetap di 0.2
+        if (treeScale < 0.2f) { 
+            treeScale = 0.2f; 
+        }
         if (treeScale < 0.1f) treeScale = 0.1f;
     }
 }
@@ -1011,21 +1040,28 @@ void specialKeyUp(int key, int x, int y) {
     }
 }
 
-void mouseMotion(int x, int y) {
-    if (!mouseActive) return;
+//////////////////////////////////////////////////////////////////////////////////////// Isan
 
+void mouseMotion(int x, int y) {
+    if (!mouseActive) return; // Hanya jalan jika mouse diklik kiri
+
+    // 1. Menghitung selisih posisi mouse sekarang dengan posisi sebelumnya
     float deltaX = (x - lastMouseX) * MOUSE_SENSITIVITY * 50.0f;
     float deltaY = (y - lastMouseY) * MOUSE_SENSITIVITY * 50.0f;
 
-    cameraYaw += deltaX;
-    cameraPitch += deltaY;
+    // 2. Menambahkan selisih tersebut ke sudut kamera
+    cameraYaw += deltaX;   // Gerak mouse horizontal mengubah Yaw (tengok kiri-kanan)
+    cameraPitch += deltaY; // Gerak mouse vertikal mengubah Pitch (tengok atas-bawah)
 
+    // 3. Membatasi agar tidak bisa menengok ke atas/bawah sampai terbalik (koprol)
     if (cameraPitch > 89.0f) cameraPitch = 89.0f;
     if (cameraPitch < -89.0f) cameraPitch = -89.0f;
 
+    // 4. Simpan posisi mouse terakhir untuk perhitungan frame berikutnya
     lastMouseX = x;
     lastMouseY = y;
 }
+
 
 void mouse(int button, int state, int x, int y) {
     if (button == GLUT_LEFT_BUTTON) {
@@ -1038,7 +1074,7 @@ void mouse(int button, int state, int x, int y) {
         }
     }
 }
-
+///////////////////////////////////////////// Nabil
 void idle() {
     updateCamera();
     
@@ -1065,7 +1101,7 @@ void reshape(int w, int h) {
     windowHeight = h;
     glViewport(0, 0, w, h);
 }
-
+//////////////////////////////////////////////////////////////////////////////////////////////// Ayu
 int main(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
