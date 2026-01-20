@@ -6,7 +6,7 @@
 //---------------------------------- global variabel
 const float PI = 3.14159265f;
 
-const float MOVE_SPEED = 0.01f; 
+const float MOVE_SPEED = 10.0f; 
 const float MOUSE_SENSITIVITY = 0.01f;
 
 float cameraPosX = 0.0f, cameraPosY = 3.0f, cameraPosZ = 10.0f;
@@ -96,11 +96,13 @@ void updateLightingLogic() {
 
     // --- 4. SPOTLIGHT ---
     if (isSpotlight) {
+    	// Mengatur arah sorotan ke bawah (0, -1, 0)
         GLfloat spotDir[] = {0.0f, -1.0f, 0.0f}; 
         glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spotDir);
         glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, spotCutoff); 
         glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, spotExponent);
     } else {
+    	// Mengatur lebar sorotan
         glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 180.0f);
     }
 
@@ -440,13 +442,9 @@ void drawMinecraftSheep6() {
 
 void drawMinecraftSheep4() {
     glPushMatrix();
-    
-    // [PERUBAHAN 1] POSISI BERJALAN KANAN-KIRI (SUMBU X)
-    // sheepZ sekarang mengontrol posisi X (Kanan/Kiri)
-    // Posisi Z kita kunci di 0.0f (atau angka lain jika ingin dimundurkan)
     glTranslatef(sheepZ, 0.0f, 6.0f); 
 
-    // [PERUBAHAN 2] ARAH HADAP
+
     // Model dasar domba ini menghadap ke KIRI (Sumbu -X).
     
     if (sheepMovingForward) {
@@ -530,12 +528,8 @@ void drawMinecraftSheep4() {
 void drawMinecraftSheep5() {
     glPushMatrix();
     
-    // [PERUBAHAN 1] POSISI BERJALAN KANAN-KIRI (SUMBU X)
-    // sheepZ sekarang mengontrol posisi X (Kanan/Kiri)
-    // Posisi Z kita kunci di 0.0f (atau angka lain jika ingin dimundurkan)
     glTranslatef(sheepZ, 0.0f, 8.0f); 
 
-    // [PERUBAHAN 2] ARAH HADAP
     // Model dasar domba ini menghadap ke KIRI (Sumbu -X).
     
     if (sheepMovingForward) {
@@ -1101,7 +1095,7 @@ void reshape(int w, int h) {
     windowHeight = h;
     glViewport(0, 0, w, h);
 }
-//////////////////////////////////////////////////////////////////////////////////////////////// Ayu
+//////////////////////////////////////////////////////////////////////////////////////////////// 
 int main(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
